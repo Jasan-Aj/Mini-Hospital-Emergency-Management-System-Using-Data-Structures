@@ -5,6 +5,7 @@ public class Patient {
     private int age;
     private String phone;
     private String illness;
+    private VisitLog visitLog;
 
     public Patient(int id, String name, int age, String phone, String illness) {
         this.id = id;
@@ -12,6 +13,7 @@ public class Patient {
         this.age = age;
         this.phone = phone;
         this.illness = illness;
+        this.visitLog = new VisitLog();
     }
 
     public int getId() {
@@ -20,6 +22,10 @@ public class Patient {
 
     public String getName() {
         return name;
+    }
+
+    public VisitLog getVisitLog() {
+        return visitLog;
     }
 
     public void showCard() {

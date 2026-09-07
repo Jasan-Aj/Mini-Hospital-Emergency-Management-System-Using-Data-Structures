@@ -49,7 +49,11 @@ public class Main {
             System.out.println("2. Find a Patient");
             System.out.println("3. Delete a Patient");
             System.out.println("4. Show the Patients List");
-            System.out.println("5. Back to Main Menu");
+            System.out.println("5. Add a Visit");
+            System.out.println("6. Delete a Visit");
+            System.out.println("7. Find a Visit");
+            System.out.println("8. Show the Visits of a Patient");
+            System.out.println("9. Back to Main Menu");
             System.out.print("Choose an option: ");
 
             switch (choose()) {
@@ -66,6 +70,18 @@ public class Main {
                     records.showAll();
                     break;
                 case 5:
+                    addVisit();
+                    break;
+                case 6:
+                    deleteVisit();
+                    break;
+                case 7:
+                    findVisit();
+                    break;
+                case 8:
+                    showVisits();
+                    break;
+                case 9:
                     stay = false;
                     break;
                 default:
@@ -104,9 +120,7 @@ public class Main {
     }
 
     private static void deleteOne() {
-        System.out.print("Patient ID to delete: ");
-        int id = Integer.parseInt(scan.nextLine());
-
+        int id = askId();
         Patient found = records.findPatient(id);
         if (found == null) {
             System.out.println("No patient with ID " + id + ".");
@@ -114,6 +128,78 @@ public class Main {
         }
         records.deletePatient(id);
         System.out.println("Patient " + found.getName() + " has been deleted.");
+    }
+
+    private static void addVisit() {
+        Patient found = pickPatient();
+        if (found == null) {
+            return;
+        }
+
+        System.out.print("Visit Number: ");
+        int visitId = Integer.parseInt(scan.nextLine());
+        System.out.print("Visit Date (DD/MM/YYYY): ");
+        String visitDate = scan.nextLine();
+        System.out.print("Doctor Name: ");
+        String doctorName = scan.nextLine();
+        System.out.print("Diagnosis: ");
+        String diagnosis = scan.nextLine();
+        System.out.print("Medicine / Treatment: ");
+        String medicine = scan.nextLine();
+
+        found.getVisitLog().addVisit(new ClinicVisit(visitId, visitDate, doctorName, diagnosis, medicine));
+    }
+
+    private static void deleteVisit() {
+        Patient found = pickPatient();
+        if (found == null) {
+            return;
+        }
+        System.out.print("Visit Number to delete: ");
+        int visitId = Integer.parseInt(scan.nextLine());
+        found.getVisitLog().removeVisit(visitId);
+    }
+
+    private static void findVisit() {
+        Patient found = pickPatient();
+        if (found == null) {
+            return;
+        }
+        System.out.print("Visit Number to find: ");
+        int visitId = Integer.parseInt(scan.nextLine());
+
+        ClinicVisit visit = found.getVisitLog().searchVisit(visitId);
+        if (visit == null) {
+            System.out.println("Visit " + visitId + " not found.");
+            return;
+        }
+        System.out.println("Visit found.");
+        visit.showVisit();
+    }
+
+    private static void showVisits() {
+        Patient found = pickPatient();
+        if (found == null) {
+            return;
+        }
+        System.out.println("Visits of " + found.getName() + ":");
+        found.getVisitLog().showVisits();
+    }
+
+    private static Patient pickPatient() {
+        System.out.print("Patient ID: ");
+        int id = Integer.parseInt(scan.nextLine());
+
+        Patient found = records.findPatient(id);
+        if (found == null) {
+            System.out.println("No patient with ID " + id + ".");
+        }
+        return found;
+    }
+
+    private static int askId() {
+        System.out.print("Patient ID to delete: ");
+        return Integer.parseInt(scan.nextLine());
     }
 
     private static void emergencyRoom() {
@@ -197,12 +283,8 @@ public class Main {
     }
 
     private static void finishTreatment() {
-        System.out.print("Patient ID: ");
-        int id = Integer.parseInt(scan.nextLine());
-
-        Patient found = records.findPatient(id);
+        Patient found = pickPatient();
         if (found == null) {
-            System.out.println("No patient with ID " + id + ".");
             return;
         }
 
