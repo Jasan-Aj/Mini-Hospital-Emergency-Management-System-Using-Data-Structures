@@ -5,6 +5,7 @@ public class Main {
     private static Scanner scan = new Scanner(System.in);
     private static PatientTree records = new PatientTree();
     private static WaitingLine line = new WaitingLine();
+    private static CareLog log = new CareLog();
 
     public static void main(String[] args) {
         boolean open = true;
@@ -15,7 +16,8 @@ public class Main {
             System.out.println("===================================");
             System.out.println("1. Patient Records");
             System.out.println("2. Emergency Waiting Room");
-            System.out.println("3. Exit");
+            System.out.println("3. Treatment History");
+            System.out.println("4. Exit");
             System.out.print("Choose an option: ");
 
             switch (choose()) {
@@ -26,11 +28,14 @@ public class Main {
                     emergencyRoom();
                     break;
                 case 3:
+                    treatmentHistory();
+                    break;
+                case 4:
                     System.out.println("System closed. Goodbye!");
                     open = false;
                     break;
                 default:
-                    System.out.println("Wrong option. Pick 1, 2 or 3.");
+                    System.out.println("Wrong option. Pick 1 to 4.");
             }
         }
     }
@@ -159,6 +164,54 @@ public class Main {
         if (next != null) {
             System.out.println(next.getName() + " is now being treated.");
         }
+    }
+
+    private static void treatmentHistory() {
+        boolean stay = true;
+        while (stay) {
+            System.out.println();
+            System.out.println("---------- TREATMENT HISTORY ----------");
+            System.out.println("1. Finish a Treatment");
+            System.out.println("2. Undo the Last Entry");
+            System.out.println("3. Show the History");
+            System.out.println("4. Back to Main Menu");
+            System.out.print("Choose an option: ");
+
+            switch (choose()) {
+                case 1:
+                    finishTreatment();
+                    break;
+                case 2:
+                    log.takeLatest();
+                    break;
+                case 3:
+                    log.showHistory();
+                    break;
+                case 4:
+                    stay = false;
+                    break;
+                default:
+                    System.out.println("Wrong option.");
+            }
+        }
+    }
+
+    private static void finishTreatment() {
+        System.out.print("Patient ID: ");
+        int id = Integer.parseInt(scan.nextLine());
+
+        Patient found = records.findPatient(id);
+        if (found == null) {
+            System.out.println("No patient with ID " + id + ".");
+            return;
+        }
+
+        System.out.print("Treatment Done: ");
+        String treatment = scan.nextLine();
+        System.out.print("Date (DD/MM/YYYY): ");
+        String date = scan.nextLine();
+
+        log.saveRecord(new CareRecord(found.getId(), found.getName(), treatment, date));
     }
 
     private static int choose() {
