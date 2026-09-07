@@ -36,8 +36,10 @@ public class Main {
             System.out.println();
             System.out.println("---------- PATIENT RECORDS ----------");
             System.out.println("1. Register a New Patient");
-            System.out.println("2. Show the Patients List");
-            System.out.println("3. Back to Main Menu");
+            System.out.println("2. Find a Patient");
+            System.out.println("3. Delete a Patient");
+            System.out.println("4. Show the Patients List");
+            System.out.println("5. Back to Main Menu");
             System.out.print("Choose an option: ");
 
             switch (choose()) {
@@ -45,9 +47,15 @@ public class Main {
                     registerNew();
                     break;
                 case 2:
-                    records.showAll();
+                    findOne();
                     break;
                 case 3:
+                    deleteOne();
+                    break;
+                case 4:
+                    records.showAll();
+                    break;
+                case 5:
                     stay = false;
                     break;
                 default:
@@ -70,6 +78,32 @@ public class Main {
 
         records.addPatient(new Patient(id, name, age, phone, illness));
         System.out.println("Patient " + name + " has been registered.");
+    }
+
+    private static void findOne() {
+        System.out.print("Patient ID to find: ");
+        int id = Integer.parseInt(scan.nextLine());
+
+        Patient found = records.findPatient(id);
+        if (found == null) {
+            System.out.println("No patient with ID " + id + ".");
+            return;
+        }
+        System.out.println("Patient found.");
+        found.showCard();
+    }
+
+    private static void deleteOne() {
+        System.out.print("Patient ID to delete: ");
+        int id = Integer.parseInt(scan.nextLine());
+
+        Patient found = records.findPatient(id);
+        if (found == null) {
+            System.out.println("No patient with ID " + id + ".");
+            return;
+        }
+        records.deletePatient(id);
+        System.out.println("Patient " + found.getName() + " has been deleted.");
     }
 
     private static int choose() {
